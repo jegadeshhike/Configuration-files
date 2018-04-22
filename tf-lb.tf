@@ -97,5 +97,3 @@ resource "aws_lb_target_group" "test" {
   vpc_id   = "${aws_vpc.main.id}"
 }
 
-
-
