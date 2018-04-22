@@ -16,8 +16,8 @@ resource "aws_s3_bucket" "log_bucket" {
     Environment = "Dev"
   }
 }
-resource "aws_security_group" "allow_all" {
-  name        = "allow_all"
+resource "aws_default_security_group" "default" {
+  name        = "default"
   description = "Allow all inbound traffic"
 
   ingress {
@@ -31,10 +31,10 @@ resource "aws_security_group" "allow_all" {
     Name = "allow_all"
   }
 }
-resource "aws_security_group" "lb_sg" {
+resource "aws_default_security_group" "lb_sg" {
   name        = "lb_sg"
   description = "Allow all inbound traffic"
-  vpc_id      = "${aws_vpc.main.id}"
+  vpc_id      = "${aws_default_vpc.default.id}"
 
   ingress {
     from_port   = 0
@@ -50,14 +50,14 @@ resource "aws_security_group" "lb_sg" {
     cidr_blocks     = ["0.0.0.0/0"]
   }
 }
-resource "aws_vpc" "main" {
+resource "aws_default_vpc" "default" {
   cidr_block = "10.0.0.0/16"
 }
 resource "aws_internet_gateway" "gw" {
-  vpc_id = "${aws_vpc.main.id}"
+  vpc_id = "${aws_default_vpc.default.id}"
 }
-resource "aws_subnet" "main" {
-  vpc_id              = "${aws_vpc.main.id}"
+resource "aws_default_subnet" "main" {
+  vpc_id              = "${aws_default_vpc.default.id}"
   availability_zone   = "us-east-2a"
   cidr_block          = "10.0.1.0/24"
 
@@ -65,8 +65,8 @@ resource "aws_subnet" "main" {
     Name = "Main"
   }
 }
-resource "aws_subnet" "main1" {
-  vpc_id              = "${aws_vpc.main.id}"
+resource "aws_default_subnet" "main1" {
+  vpc_id              = "${aws_default_vpc.default.id}"
   availability_zone   = "us-east-2b"
   cidr_block          = "10.0.2.0/24"
 
@@ -77,8 +77,8 @@ resource "aws_subnet" "main1" {
 resource "aws_lb" "test" {
   name            = "test-lb-tf"
   internal        = false
-  security_groups = ["${aws_security_group.lb_sg.id}"]
-  subnets         = ["${aws_subnet.main.id}","${aws_subnet.main1.id}"]
+  security_groups = ["${aws_default_security_group.lb_sg.id}","${aws_default_security_group.default.id}"]
+  subnets         = ["${aws_default_subnet.main.id}","${aws_default_subnet.main1.id}"]
 
   access_logs {
     bucket  = "${aws_s3_bucket.log_bucket.bucket}"
@@ -94,5 +94,5 @@ resource "aws_lb_target_group" "test" {
   name     = "tf-example-lb-tg"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = "${aws_vpc.main.id}"
+  vpc_id   = "${aws_default_vpc.default.id}"
 }
