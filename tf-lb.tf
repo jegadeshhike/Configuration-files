@@ -17,8 +17,7 @@ resource "aws_s3_bucket" "log_bucket" {
   }
 }
 resource "aws_default_security_group" "default" {
-  name        = "default"
-  description = "Allow all inbound traffic"
+    vpc_id      = "${aws_default_vpc.default.id}"
 
   ingress {
     from_port   = 0
@@ -31,8 +30,8 @@ resource "aws_default_security_group" "default" {
     Name = "allow_all"
   }
 }
-resource "aws_default_security_group" "lb_sg" {
-  name        = "lb_sg"
+/*
+  resource "aws_default_security_group" "lb_sg" {
   description = "Allow all inbound traffic"
   vpc_id      = "${aws_default_vpc.default.id}"
 
@@ -49,14 +48,20 @@ resource "aws_default_security_group" "lb_sg" {
     protocol        = "-1"
     cidr_blocks     = ["0.0.0.0/0"]
   }
+
+  tags {
+    Name  = "lb_sg"
+  }
 }
+*/
 resource "aws_default_vpc" "default" {
   cidr_block = "10.0.0.0/16"
 }
 resource "aws_internet_gateway" "gw" {
   vpc_id = "${aws_default_vpc.default.id}"
 }
-resource "aws_default_subnet" "main" {
+/*
+  resource "aws_default_subnet" "main" {
   vpc_id              = "${aws_default_vpc.default.id}"
   availability_zone   = "us-east-2a"
   cidr_block          = "10.0.1.0/24"
@@ -96,3 +101,4 @@ resource "aws_lb_target_group" "test" {
   protocol = "HTTP"
   vpc_id   = "${aws_default_vpc.default.id}"
 }
+*/
