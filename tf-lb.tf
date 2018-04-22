@@ -17,7 +17,7 @@ resource "aws_s3_bucket" "log_bucket" {
   }
 }
 resource "aws_default_security_group" "default" {
-    vpc_id      = "${aws_default_vpc.default.id}"
+    vpc_id      = "vpc-64d0b50c"
 
   ingress {
     from_port   = 0
