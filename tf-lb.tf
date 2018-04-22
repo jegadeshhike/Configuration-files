@@ -78,7 +78,7 @@ resource "aws_lb" "test" {
   name            = "test-lb-tf"
   internal        = false
   security_groups = ["${aws_security_group.lb_sg.id}"]
-  subnets         = ["${aws_subnet.main.id}"]
+  subnets         = ["${aws_subnet.main.id}","${aws_subnet.main1.id}"]
 
   access_logs {
     bucket  = "${aws_s3_bucket.log_bucket.bucket}"
